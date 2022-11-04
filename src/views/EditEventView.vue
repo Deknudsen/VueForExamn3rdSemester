@@ -6,6 +6,9 @@
             <Datepicker class="inputField" :format="format"  v-model="event.date" ></Datepicker>
         
             <v-btn class="inputBtn" @click="editEvent(event)">Edit</v-btn>
+            <router-link to="/adminEvents" >
+                    <v-btn >Cancle</v-btn>
+                </router-link>
         </div>
     </div>
 </template>
@@ -16,6 +19,8 @@ import { ref, computed, onMounted } from 'vue'
 import useEvents from '../modules/useEvents'
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import router from '@/router'
 
 const format = (date) => {
     const day = date.getDate()
@@ -26,15 +31,29 @@ const format = (date) => {
 
 const { eventsData, getEventsData, editEvent } = useEvents()
 
+
 const route = useRoute()
 const routeId = ref(route.params.id)
+
+let auth
+const isLoggedin = ref(false)
 
 let filteredEventOnId = computed(() => {
     return eventsData.value.filter(i => i.id == routeId.value)
 })
 
 onMounted(() => {
-    getEventsData()
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if(user) {
+            getEventsData(),
+            isLoggedin.value = true
+        }
+        else {
+            router.push({ path: '/login'}),
+            isLoggedin.value = false
+        }
+    })
 })
     
 </script>

@@ -40,7 +40,12 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/AdminLoginView.vue')
+    component: () => import('../views/LoginView.vue')
+  },
+  {
+    path: '/singleEvent/:id',
+    name: 'singleEvent',
+    component: () => import('../views/SingleEventView.vue')
   }
 ]
 

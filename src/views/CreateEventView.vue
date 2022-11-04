@@ -6,19 +6,24 @@
             <Datepicker class="inputField" :format="format"  v-model="addEventInfo.date" ></Datepicker>
         
             <v-btn class="inputBtn" @click="addEvent(addEventInfo)">Create</v-btn>
+            <router-link to="/adminEvents" >
+                    <v-btn >Cancle</v-btn>
+                </router-link>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import useEvent from '../modules/useEvents'
+import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { onMounted, ref } from 'vue'
+import useEvents from '../modules/useEvents'
+import router from '@/router/index.js'
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
 let addEventInfo = ref({})
 
-const { addEvent } = useEvent()
+const { addEvent } = useEvents()
 
 const format = (date) => {
     const day = date.getDate()
@@ -26,6 +31,23 @@ const format = (date) => {
     const yeah = date.getFullYear()
     return `${day}/${month}/${yeah}`
 }
+
+
+let auth
+const isLoggedin = ref(false)
+
+onMounted(() => {
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if(user) {
+            isLoggedin.value = true
+        }
+        else {
+            router.push({ path: '/login'}),
+            isLoggedin.value = false
+        }
+    })
+})
 
 </script>
 

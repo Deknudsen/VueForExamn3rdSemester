@@ -20,14 +20,28 @@
 
 <script setup>
 import useEvents from '../modules/useEvents'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import router from '@/router/index.js'
 
 const { eventsData, getEventsData, deleteEvent } = useEvents()
 
 
+let auth
+const isLoggedin = ref(false)
+
 onMounted(() => {
-    getEventsData()
-    
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if(user) {
+            getEventsData(),
+            isLoggedin.value = true
+        }
+        else {
+            router.push({ path: '/login'}),
+            isLoggedin.value = false
+        }
+    })
 })
 
 </script>

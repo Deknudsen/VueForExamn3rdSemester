@@ -1,10 +1,13 @@
 <template>
 <div>
 
-    <div v-for="event in events" :key="event">
-        <div>
-            <h2>{{event.id}}</h2>
-        </div>
+    <div v-for="event in eventsData" :key="event">
+        <router-link :to="{ name:'singleEvent', params:{ id : event.id}}" >
+
+            <div>
+                <h2>{{event.title}}</h2>
+            </div>
+        </router-link>
     </div>
 </div>
 </template>
@@ -14,7 +17,9 @@ import { onMounted} from 'vue'
 import useEvents from '../modules/useEvents'
 
 
-    const { events, getEventsData } = useEvents()
+    const { eventsData, getEventsData } = useEvents()
+
+    
 
     onMounted(() => {
         getEventsData()
